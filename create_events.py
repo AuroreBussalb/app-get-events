@@ -11,7 +11,7 @@ def create_events(raw):
     array_events = mne.make_fixed_length_events(raw, duration=10)
 
     # Save events matrix
-    np.savetxt("out_dir_create_events/events.tsv",array_2d,delimiter="\t",fmt="%d")
+    np.savetxt("out_dir_create_events/events.tsv", array_events, delimiter="\t", fmt="%d")
 
     return array_events
 

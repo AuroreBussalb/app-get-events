@@ -12,7 +12,7 @@ def create_events(raw):
     print(array_events)
 
     # Save events matrix
-    np.savetxt("out_dir_create_events/events.tsv", array_events, delimiter="\t", fmt="%d")
+    np.savetxt("out_dir_create_events/events.tsv", array_events, delimiter="\t")
 
     return array_events
 

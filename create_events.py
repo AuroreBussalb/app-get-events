@@ -9,12 +9,12 @@ def create_events(raw):
 
     # create fixed length events
     array_events = mne.make_fixed_length_events(raw, duration=10)
+    print(array_events)
 
     # Save events matrix
     np.savetxt("out_dir_create_events/events.tsv", array_events, delimiter="\t", fmt="%d")
 
     return array_events
-    print(array_events)
 
 
 def main():

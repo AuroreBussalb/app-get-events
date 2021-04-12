@@ -33,7 +33,7 @@ def main():
     # Test if the data contains events
     if raw.info['events'] is True:
         user_warning_message = f'Events already exist in this raw file. ' \
-                               f'Applying this App will overwrite these events.' \
+                               f'Applying this App will overwrite these events.' 
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
     

@@ -12,7 +12,7 @@ def create_events(raw):
 
     # Save events matrix
     with open("out_dir_create_events/events.tsv", "w") as array_events_file:
-       array_events_file.write() 
+       array_events_file.write(array_events) 
 
     return array_events
 

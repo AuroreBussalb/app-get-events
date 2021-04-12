@@ -14,6 +14,7 @@ def create_events(raw):
     np.savetxt("out_dir_create_events/events.tsv", array_events, delimiter="\t", fmt="%d")
 
     return array_events
+    print(array_events)
 
 
 def main():
@@ -31,8 +32,7 @@ def main():
 
     # Test if the data contains events
     if raw.info['events'] is True:
-        user_warning_message = f'Events already exist in this raw file. ' \
-                               f'Applying this App will overwrite these events.' 
+        user_warning_message = f'Events already exist in this raw file.' 
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
     

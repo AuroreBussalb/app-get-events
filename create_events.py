@@ -81,7 +81,7 @@ def main():
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
     
     # Create events
-    create_events(raw, param_create_events)
+    get_events(raw, param_create_events)
 
     # Success message in product.json    
     dict_json_product['brainlife'].append({'type': 'success', 'msg': 'Events were successfully created.'})

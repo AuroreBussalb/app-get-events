@@ -78,7 +78,7 @@ def get_events(raw, param_make_events, param_make_events_id, param_make_events_s
 
     # Get events from raw file 
     else:
-        events = mne.find_events(raw, stim_channels=param_find_events_stim_channels, output=param_find_events_output,
+        events = mne.find_events(raw, stim_channel=param_find_events_stim_channels, output=param_find_events_output,
                                  consecutive=param_find_events_consecutive, min_duration=param_find_events_min_duration, 
                                  shortest_event=param_find_events_shortest_event, mask=param_find_events_mask, 
                                  uint_cast=param_find_events_uint_cast, mask_type=param_find_events_mask_type, 
@@ -147,7 +147,7 @@ def main():
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
 
     # Define kwargs
-    
+
     # Delete headshape key from config file
     del config['events']
 

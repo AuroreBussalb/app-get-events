@@ -1,13 +1,18 @@
 #!/usr/local/bin/python3
 
 import json
-import mne/
+import mne
 import numpy as np
 import warnings
 import os
 import shutil
 
-def get_events(raw, param_make_events):
+def get_events(raw, param_make_events, param_make_events_id, param_make_events_start,
+               param_make_events_stop, param_make_events_duration, param_make_events_first_samp,
+               param_make_events_overlap, param_find_events_stim_channels, param_find_events_output,
+               param_find_events_consecutive, param_find_events_min_duration,param_find_events_shortest_event,
+               param_find_events_mask, param_find_events_uint_cast, param_find_events_mask_type, 
+               param_find_events_initial_event):
     """Extract existing events from a fif file or create new events.
 
     Parameters
@@ -67,11 +72,17 @@ def get_events(raw, param_make_events):
 
     # Create fixed length events
     if param_make_events is True:
-        events = mne.make_fixed_length_events(raw, duration=10)
+        events = mne.make_fixed_length_events(raw, id=param_make_events_id, start=param_make_events_start,
+                                              stop=param_make_events_stop, duration=param_make_events_duration, 
+                                              first_samp=param_make_events_first_samp, overlap=param_make_events_overlap)
 
     # Get events from raw file 
     else:
-        events = mne.find_events(raw)
+        events = mne.find_events(raw, stim_channels=param_find_events_stim_channels, output=param_find_events_output,
+                                 consecutive=param_find_events_consecutive, min_duration=param_find_events_min_duration, 
+                                 shortest_event=param_find_events_shortest_event, mask=param_find_events_mask, 
+                                 uint_cast=param_find_events_uint_cast, mask_type=param_find_events_mask_type, 
+                                 initial_event=param_find_events_initial_event)
 
     # Save events matrix
     np.savetxt("out_dir_get_events/events.tsv", events, delimiter="\t")

@@ -147,6 +147,10 @@ def main():
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
 
     # Define kwargs
+    
+    # Delete headshape key from config file
+    del config['events']
+
     # Delete keys values in config.json when this app is executed on Brainlife
     if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
         del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 

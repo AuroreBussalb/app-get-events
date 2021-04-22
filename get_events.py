@@ -10,7 +10,7 @@ import shutil
 def get_events(raw, param_make_events, param_make_events_id, param_make_events_start,
                param_make_events_stop, param_make_events_duration, param_make_events_first_samp,
                param_make_events_overlap, param_find_events_stim_channels, param_find_events_output,
-               param_find_events_consecutive, param_find_events_min_duration,param_find_events_shortest_event,
+               param_find_events_consecutive, param_find_events_min_duration, param_find_events_shortest_event,
                param_find_events_mask, param_find_events_uint_cast, param_find_events_mask_type, 
                param_find_events_initial_event):
     """Extract existing events from a fif file or create new events.
@@ -137,6 +137,16 @@ def main():
     # mask
     if config['param_find_events_mask'] == "":
         config['param_find_events_mask'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
+
+    # Deal with stim channels
+    
+    # When it is run on BL
+    stim_channels = config['param_find_events_stim_channels']
+    if isinstance(stim_channels, str) and stim_channels.find("[") != -1 and stim_channels is not None:
+        stim_channels = stim_channels.replace('[', '')
+        stim_channels = stim_channels.replace(']', '')
+        stim_channels = stim_channels.replace("'", '')
+        config['param_find_events_stim_channels'] = list(map(str, stim_channels.split(', ')))    
 
     # Test if the data contains events
     if raw.info['events'] is True and config['param_make_events'] is True:

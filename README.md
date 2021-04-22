@@ -1,6 +1,6 @@
 # app-get-events
 
-This is a draft of a future Brainlife App using MNE Python to extract existing events ([`mne.find_events`](https://mne.tools/stable/generated/mne.find_events.html?highlight=find_events#mne.find_events) or create events ([`mne.make_fixed_length_events`](https://mne.tools/stable/generated/mne.make_fixed_length_events.html?highlight=make_fixed_length_events#mne.make_fixed_length_events).
+This is the repository of a Brainlife App using MNE Python to extract existing events ([`mne.find_events`](https://mne.tools/stable/generated/mne.find_events.html?highlight=find_events#mne.find_events) or create events ([`mne.make_fixed_length_events`](https://mne.tools/stable/generated/mne.make_fixed_length_events.html?highlight=make_fixed_length_events#mne.make_fixed_length_events).
 
 # app-get-events documentation
 
@@ -22,11 +22,8 @@ This is a draft of a future Brainlife App using MNE Python to extract existing e
     * `param_make_events_overlap`: `float`, the overlap between events. Must be 0 <= overlap < duration. Default is 0.
     * `param_find_events_stim_channels`: `str`, `list of str`, optional, name of the stim channel or all the stim channels affected by triggers. Default is None.
     * `param_find_events_output`: `str`, whether to report when events start, when events end, or both. Either 'onset', 'offset', or 'step'. Default is 'onset'.
-    * `param_find_events_consecutive`: `bool` or `str`, if True, consider instances where the value of the events channel changes without first returning 
-        to zero as multiple events. If False, report only instances where the value of the events channel 
-        changes from/to zero. If ‘increasing’, report adjacent events only when the second event code is greater than the first. Default is 'increasing'.
-    * `param_find_events_min_duration`: `float`, the minimum duration of a change in the events channel required to consider it as an event (in seconds).
-        Default is 0.
+    * `param_find_events_consecutive`: `bool` or `str`, if True, consider instances where the value of the events channel changes without first returning to zero as multiple events. If False, report only instances where the value of the events channel changes from/to zero. If ‘increasing’, report adjacent events only when the second event code is greater than the first. Default is 'increasing'.
+    * `param_find_events_min_duration`: `float`, the minimum duration of a change in the events channel required to consider it as an event (in seconds). Default is 0.
     * `param_find_events_shortest_event`, `int`, minimum number of samples an event must last. Default is 2.
     * `param_find_events_mask`, `int`, optional, The value of the digital mask to apply to the stim channel values. If None, no masking is performed. Default is None.
     * `param_find_events_uint_cast`, `bool`, if True, do a cast to uint16 on the channel data. Default is False.
@@ -56,9 +53,6 @@ brainlife.io is publicly funded and for the sustainability of the project it is 
 
 ### Citations
 1. Avesani, P., McPherson, B., Hayashi, S. et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. Sci Data 6, 69 (2019). [https://doi.org/10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
-2. Taulu S. and Kajola M. Presentation of electromagnetic multichannel data: The signal space separation method. Journal of Applied Physics, 97 (2005). [https://doi.org/10.1063/1.1935742](https://doi.org/10.1063/1.1935742)
-3. Taulu S. and Simola J. Spatiotemporal signal space separation method for rejecting nearby interference in MEG measurements. Physics in Medicine and Biology, 51 (2006). [https://doi.org/10.1088/0031-9155/51/7/008](https://doi.org/10.1088/0031-9155/51/7/008)
-
 
 ## Running the App 
 

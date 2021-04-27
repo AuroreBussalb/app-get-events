@@ -104,6 +104,9 @@ def main():
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
     raw.save("out_dir_get_events/meg.fif", overwrite=True)
 
+
+    ## Read the optional files
+
     # Read the crosstalk file
     cross_talk_file = config.pop('crosstalk')
     if os.path.exists(cross_talk_file) is True:
@@ -124,10 +127,12 @@ def main():
     if os.path.exists(head_pos) is True:
         shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
 
+
     # Convert all "" into None when the App runs on BL
     tmp = dict((k, None) for k, v in config.items() if v == "")
     config.update(tmp)
 
+    
     ## Convert parameters ## 
 
     # Deal with stim channels #
@@ -153,6 +158,7 @@ def main():
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
 
+    
     ## Define kwargs ##
 
     # Delete events key from config file
@@ -162,6 +168,7 @@ def main():
     if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
         del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 
     kwargs = config  
+
     
     # Create or extract events
     get_events(raw, **kwargs)

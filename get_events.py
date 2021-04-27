@@ -140,10 +140,10 @@ def main():
 
     # Deal with param consecutive # 
     # Convert it into a bool if necessary
-    if config['param_consecutive'] == "True":
-        config['param_consecutive'] = True
-    elif config['param_consecutive'] == "False":
-        config['param_consecutive'] = False
+    if config['param_find_events_consecutive'] == "True":
+        config['param_find_events_consecutive'] = True
+    elif config['param_find_events_consecutive'] == "False":
+        config['param_find_events_consecutive'] = False
 
     # Test if the data contains events
     if raw.info['events'] is True and config['param_make_events'] is True:

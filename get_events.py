@@ -124,29 +124,26 @@ def main():
     if os.path.exists(head_pos) is True:
         shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
 
-    # Check for None parameters
+    # Convert all "" into None when the App runs on BL
+    tmp = dict((k, None) for k, v in config.items() if v == "")
+    config.update(tmp)
 
-    # make events stop
-    if config['param_make_events_stop'] == "":
-        config['param_make_events_stop'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
+    ## Convert parameters ## 
 
-    # stim channels
-    if config['param_find_events_stim_channels'] == "":
-        config['param_find_events_stim_channels'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
-
-    # mask
-    if config['param_find_events_mask'] == "":
-        config['param_find_events_mask'] = None  # when App is run on Bl, no value for this parameter corresponds to ''
-
-    # Deal with stim channels
-    
-    # When it is run on BL
+    # Deal with stim channels #
+    # Convert it into a list of strings it is run on BL
     stim_channels = config['param_find_events_stim_channels']
     if isinstance(stim_channels, str) and stim_channels.find("[") != -1 and stim_channels is not None:
         stim_channels = stim_channels.replace('[', '')
         stim_channels = stim_channels.replace(']', '')
-        stim_channels = stim_channels.replace("'", '')
-        config['param_find_events_stim_channels'] = list(map(str, stim_channels.split(', ')))    
+        config['param_find_events_stim_channels'] = list(map(str, stim_channels.split(', ')))   
+
+    # Deal with param consecutive # 
+    # Convert it into a bool if necessary
+    if config['param_consecutive'] == "True":
+        config['param_consecutive'] = True
+    elif config['param_consecutive'] == "False":
+        config['param_consecutive'] = False
 
     # Test if the data contains events
     if raw.info['events'] is True and config['param_make_events'] is True:
@@ -156,9 +153,9 @@ def main():
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
 
-    # Define kwargs
+    ## Define kwargs ##
 
-    # Delete headshape key from config file
+    # Delete events key from config file
     del config['events']
 
     # Delete keys values in config.json when this app is executed on Brainlife
@@ -166,7 +163,7 @@ def main():
         del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 
     kwargs = config  
     
-    # Create events
+    # Create or extract events
     get_events(raw, **kwargs)
 
     # Success message in product.json 

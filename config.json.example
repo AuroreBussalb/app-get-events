@@ -5,7 +5,7 @@
     "destination": "/network/lustre/iss01/home/aurore.bussalb/Repositories/data_test_BL/mean_tm-raw.fif",
 	"events": "/network/lustre/iss01/home/aurore.bussalb/Repositories/app-create-events/out_dir_create_events/events.tsv",
 	"channels": null,
-    "headshape": "",
+    "headshape": null,
 	"param_make_events": false,
 	"param_make_events_id": 1,
 	"param_make_events_start": 0,

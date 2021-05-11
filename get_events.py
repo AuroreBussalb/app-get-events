@@ -7,6 +7,8 @@ import warnings
 import os
 import shutil
 from mne_bids import BIDSPath, write_raw_bids
+import pandas as pd
+
 
 def get_events(raw, param_make_events, param_make_events_id, param_make_events_start,
                param_make_events_stop, param_make_events_duration, param_make_events_first_samp,
@@ -85,6 +87,8 @@ def get_events(raw, param_make_events, param_make_events_id, param_make_events_s
                                  uint_cast=param_find_events_uint_cast, mask_type=param_find_events_mask_type, 
                                  initial_event=param_find_events_initial_event)
 
+    np.savetxt("events_raw.tsv", events, delimiter="\t")
+
     return events
 
 
@@ -100,7 +104,7 @@ def main():
     # Read the MEG file and save it in out_dir_get_events
     data_file = config.pop('fif')
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
-    # raw.save("out_dir_get_events/meg.fif", overwrite=True)
+    raw.save("out_dir_get_events/meg.fif", overwrite=True)
 
 
     ## Read the optional files
@@ -214,14 +218,14 @@ def main():
     else:
         events_read_events, dict_events_id = mne.read_events(data_file, return_event_id=True) # to be tested
 
-    # Write BIDS to create channels.tsv BIDS compliant
+    # Write BIDS to create events.tsv BIDS compliant
     write_raw_bids(raw, bids_path, events_data=events, event_id=dict_event_id, overwrite=True)
 
     # Extract events.tsv from bids path
     events_file = 'bids/sub-subject/meg/sub-subject_task-task_run-01_events.tsv'
 
     # Copy events.tsv in outdir
-    shutil.copy2(events_file, 'out_dir_get_events/events.tsv') # required to run a pipeline on BL
+    shutil.copy2(events_file, 'out_dir_get_events/events.tsv') 
 
 
     # Success message in product.json 

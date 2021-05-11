@@ -18,4 +18,4 @@ set -x
 mkdir -p out_dir_get_events
 
 # Run the actual python code
-singularity exec docker://brainlife/mne:0.22.0 python3 get_events.py
+singularity exec docker://brainlife/mne:0.23dev python3 get_events.py

@@ -6,6 +6,7 @@ import numpy as np
 import warnings
 import os
 import shutil
+from mne_bids import BIDSPath, write_raw_bids
 
 def get_events(raw, param_make_events, param_make_events_id, param_make_events_start,
                param_make_events_stop, param_make_events_duration, param_make_events_first_samp,
@@ -84,9 +85,6 @@ def get_events(raw, param_make_events, param_make_events_id, param_make_events_s
                                  uint_cast=param_find_events_uint_cast, mask_type=param_find_events_mask_type, 
                                  initial_event=param_find_events_initial_event)
 
-    # Save events matrix
-    np.savetxt("out_dir_get_events/events.tsv", events, delimiter="\t")
-
     return events
 
 
@@ -102,7 +100,7 @@ def main():
     # Read the MEG file and save it in out_dir_get_events
     data_file = config.pop('fif')
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
-    raw.save("out_dir_get_events/meg.fif", overwrite=True)
+    # raw.save("out_dir_get_events/meg.fif", overwrite=True)
 
 
     ## Read the optional files
@@ -132,13 +130,14 @@ def main():
              shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
 
     # Read events file 
-    events_file = config.pop('events')
-    if events_file is not None:
+    events_file = config.pop('events') 
+    if events_file is not None:    
         if os.path.exists(events_file) is True:
-            shutil.copy2(events_file, 'out_dir_get_events/events.tsv') # required to run a pipeline on BL
-        else:
-            events_file = None
-
+            user_warning_message_events = f'The events.tsv file provided will be ' \
+                                          f'overwritten with the new events obtained by this App.' 
+            warnings.warn(user_warning_message_events)
+            dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
+ 
     # Read channels file 
     channels_file = config.pop('channels')
     if channels_file is not None:
@@ -169,12 +168,17 @@ def main():
         config['param_find_events_consecutive'] = False
 
     # Test if the data contains events
-    if raw.info['events'] is True and config['param_make_events'] is True:
+    if raw.info['events'] and config['param_make_events'] is True:
         user_warning_message = f'Events already exist in this raw file. ' \
                                f'You are going to create a matrix of events ' \
                                f'different from those contained in the raw file.'
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
+    elif not raw.info['events'] and config['param_make_events'] is False:
+        error_value_message = f"You can't extract events from this raw file because it doesn't contain " \
+                              f"any events. Please set param_make_events to 'True' so that fixed " \
+                              f"length events will be created."
+        raise ValueError(error_value_message)
 
     
     ## Define kwargs ##
@@ -186,7 +190,39 @@ def main():
 
     
     # Create or extract events
-    get_events(raw, **kwargs)
+    events = get_events(raw, **kwargs)
+
+
+    ## Create BIDS compliant events file
+
+    # Create a BIDSPath
+    bids_path = BIDSPath(subject='subject',
+                         session=None,
+                         task='task',
+                         run='01',
+                         acquisition=None,
+                         processing=None,
+                         recording=None,
+                         space=None,
+                         suffix=None,
+                         datatype='meg',
+                         root='bids')
+
+    # Create event_id 
+    if config['param_make_events'] is True:
+        dict_event_id = {'event': config['param_make_events_id']}
+    else:
+        events_read_events, dict_events_id = mne.read_events(data_file, return_event_id=True) # to be tested
+
+    # Write BIDS to create channels.tsv BIDS compliant
+    write_raw_bids(raw, bids_path, events_data=events, event_id=dict_event_id, overwrite=True)
+
+    # Extract events.tsv from bids path
+    events_file = 'bids/sub-subject/meg/sub-subject_task-task_run-01_events.tsv'
+
+    # Copy events.tsv in outdir
+    shutil.copy2(events_file, 'out_dir_get_events/events.tsv') # required to run a pipeline on BL
+
 
     # Success message in product.json 
     if config['param_make_events'] is True:   

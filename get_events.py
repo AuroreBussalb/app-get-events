@@ -104,34 +104,9 @@ def main():
     # Read the MEG file and save it in out_dir_get_events
     data_file = config.pop('fif')
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
-    raw.save("out_dir_get_events/meg.fif", overwrite=True)
 
 
     ## Read the optional files
-
-    # Read the crosstalk file
-    cross_talk_file = config.pop('crosstalk')
-    if cross_talk_file is not None:
-        if os.path.exists(cross_talk_file) is True:
-            shutil.copy2(cross_talk_file, 'out_dir_get_events/crosstalk_meg.fif')  # required to run a pipeline on BL
-
-    # Read the calibration file
-    calibration_file = config.pop('calibration')
-    if calibration_file is not None:
-        if os.path.exists(calibration_file) is True:
-            shutil.copy2(calibration_file, 'out_dir_get_events/calibration_meg.dat')  # required to run a pipeline on BL
-
-    # Read destination file 
-    destination_file = config.pop('destination')
-    if destination_file is not None:
-        if os.path.exists(destination_file) is True:
-            shutil.copy2(destination_file, 'out_dir_get_events/destination.fif')  # required to run a pipeline on BL
-
-    # Read head pos file
-    head_pos = config.pop('headshape')
-    if head_pos is not None:
-        if os.path.exists(head_pos) is True:
-             shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
 
     # Read events file 
     events_file = config.pop('events') 
@@ -142,12 +117,6 @@ def main():
             warnings.warn(user_warning_message_events)
             dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
  
-    # Read channels file 
-    channels_file = config.pop('channels')
-    if channels_file is not None:
-        if os.path.exists(channels_file):
-            shutil.copy2(channels_file, 'out_dir_get_events/channels.tsv')  # required to run a pipeline on BL
-
 
     # Convert all "" into None when the App runs on BL
     tmp = dict((k, None) for k, v in config.items() if v == "")
@@ -171,6 +140,7 @@ def main():
     elif config['param_find_events_consecutive'] == "False":
         config['param_find_events_consecutive'] = False
 
+    
     # Test if the data contains events
     if raw.info['events'] and config['param_make_events'] is True:
         user_warning_message = f'Events already exist in this raw file. ' \
@@ -197,7 +167,7 @@ def main():
     events = get_events(raw, **kwargs)
 
 
-    ## Create BIDS compliant events file
+    ## Create BIDS compliant events file ## 
 
     # Create a BIDSPath
     bids_path = BIDSPath(subject='subject',

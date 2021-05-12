@@ -116,6 +116,18 @@ def main():
                                           f'overwritten with the new events obtained by this App.' 
             warnings.warn(user_warning_message_events)
             dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
+
+    # Read head pos file
+    head_pos = config.pop('headshape')
+    if head_pos is not None:
+        if os.path.exists(head_pos) is True:
+             shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
+
+    # Read destination file 
+    destination_file = config.pop('destination')
+    if destination_file is not None:
+        if os.path.exists(destination_file) is True:
+            shutil.copy2(destination_file, 'out_dir_get_events/destination.fif')  # required to run a pipeline on BL
  
 
     # Convert all "" into None when the App runs on BL

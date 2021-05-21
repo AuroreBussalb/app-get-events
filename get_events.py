@@ -87,7 +87,7 @@ def get_events(raw, param_make_events, param_make_events_id, param_make_events_s
                                  uint_cast=param_find_events_uint_cast, mask_type=param_find_events_mask_type, 
                                  initial_event=param_find_events_initial_event)
 
-    np.savetxt("events_raw.tsv", events, delimiter="\t")
+    # np.savetxt("events_raw.tsv", events, delimiter="\t")
 
     return events
 

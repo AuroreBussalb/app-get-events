@@ -108,6 +108,15 @@ def main():
 
     ## Read the optional files
 
+    # Read the crosstalk file
+    cross_talk_file = config.pop('crosstalk')
+
+    # Read the calibration file
+    calibration_file = config.pop('calibration')
+
+    # Read destination file 
+    destination_file = config.pop('destination')
+
     # Read events file 
     events_file = config.pop('events') 
     if events_file is not None:    
@@ -123,12 +132,27 @@ def main():
         if os.path.exists(head_pos) is True:
              shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
 
-    # Read destination file 
-    destination_file = config.pop('destination')
-    if destination_file is not None:
-        if os.path.exists(destination_file) is True:
-            shutil.copy2(destination_file, 'out_dir_get_events/destination.fif')  # required to run a pipeline on BL
- 
+    # Read channels file 
+    channels_file = config.pop('channels')
+    if channels_file is not None:
+        if os.path.exists(channels_file):
+            shutil.copy2(channels_file, 'out_dir_get_events/channels.tsv')  # required to run a pipeline on BL
+            df_channels = pd.read_csv(channels_file, sep='\t')
+            # Select bad channels' name
+            bad_channels = df_channels[df_channels["status"] == "bad"]['name']
+            bad_channels = list(bad_channels.values)
+            # Put channels.tsv bad channels in data.info['bads']
+            data.info['bads'].sort() 
+            bad_channels.sort()
+            # Warning message
+            if data.info['bads'] != bad_channels:
+                user_warning_message_channels = f'Bad channels from the info of your data file are different from ' \
+                                                f'those in the channels.tsv file. By default, only bad channels from channels.tsv ' \
+                                                f'are considered as bad: the info of your data file is updated with those channels.'
+                warnings.warn(user_warning_message_channels)
+                dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
+                data.info['bads'] = bad_channels
+
 
     # Convert all "" into None when the App runs on BL
     tmp = dict((k, None) for k, v in config.items() if v == "")
@@ -198,7 +222,7 @@ def main():
     if config['param_make_events'] is True:
         dict_event_id = {'event': config['param_make_events_id']}
     else:
-        events_read_events, dict_events_id = mne.read_events(data_file, return_event_id=True) # to be tested
+        events, dict_events_id = mne.read_events(data_file, return_event_id=True) # to be tested
 
     # Write BIDS to create events.tsv BIDS compliant
     write_raw_bids(raw, bids_path, events_data=events, event_id=dict_event_id, overwrite=True)

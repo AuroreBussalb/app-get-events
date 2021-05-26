@@ -180,7 +180,7 @@ def main():
     # Test if the data contains events
     if raw.info['events'] and config['param_make_events'] is True:
         user_warning_message = f'Events already exist in this raw file. ' \
-                               f'You are going to create a matrix of events ' \
+                               f'You are going to create an events.tsv file with events' \
                                f'different from those contained in the raw file.'
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
@@ -222,7 +222,7 @@ def main():
     if config['param_make_events'] is True:
         dict_event_id = {'event': config['param_make_events_id']}
     else:
-        events, dict_events_id = mne.read_events(data_file, return_event_id=True) # to be tested
+        former_events, dict_events_id = mne.read_events(data_file, return_event_id=True) # to be tested
 
     # Write BIDS to create events.tsv BIDS compliant
     write_raw_bids(raw, bids_path, events_data=events, event_id=dict_event_id, overwrite=True)

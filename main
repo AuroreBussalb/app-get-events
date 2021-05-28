@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -l nodes=1:ppn=1
 #PBS -l walltime=02:00:00
-#PBS -N maxfilter
+#PBS -N get_events
 
 # PBS is a computer software that performs job-scheduling
 # Copyright (c) 2020 brainlife.io at University of Texas at Austin and Indiana U
@@ -19,3 +19,6 @@ mkdir -p out_dir_get_events
 
 # Run the actual python code
 singularity exec docker://brainlife/mne:0.23dev python3 get_events.py
+
+# Delete the bids folder
+rm -r bids

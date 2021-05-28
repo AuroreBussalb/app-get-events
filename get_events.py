@@ -8,6 +8,7 @@ import os
 import shutil
 from mne_bids import BIDSPath, write_raw_bids
 import pandas as pd
+from collections import Counter
 
 
 def get_events(raw, param_make_events, param_make_events_id, param_make_events_start,
@@ -86,8 +87,6 @@ def get_events(raw, param_make_events, param_make_events_id, param_make_events_s
                                  shortest_event=param_find_events_shortest_event, mask=param_find_events_mask, 
                                  uint_cast=param_find_events_uint_cast, mask_type=param_find_events_mask_type, 
                                  initial_event=param_find_events_initial_event)
-
-    # np.savetxt("events_raw.tsv", events, delimiter="\t")
 
     return events
 
@@ -180,7 +179,7 @@ def main():
     # Test if the data contains events
     if raw.info['events'] and config['param_make_events'] is True:
         user_warning_message = f'Events already exist in this raw file. ' \
-                               f'You are going to create an events.tsv file with events' \
+                               f'You are going to create an events.tsv file with events ' \
                                f'different from those contained in the raw file.'
         warnings.warn(user_warning_message)
         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message})
@@ -218,11 +217,17 @@ def main():
                          datatype='meg',
                          root='bids')
 
-    # Create event_id 
+    # Extract event_id value #
+    # When fixed length events were created
     if config['param_make_events'] is True:
         dict_event_id = {'event': config['param_make_events_id']}
-    else:
-        former_events, dict_events_id = mne.read_events(data_file, return_event_id=True) # to be tested
+    # When existing events were extracted    
+    else: # to be tested
+        event_id_value = list(events[:, 2])  # the third column of events corresponds to the value column of BIDS events.tsv
+        id_values_occurrences = Counter(event_id_value)  # number of different events
+        id_values_occurrences = list(id_values_occurrences.keys())
+        trials_type = [f"events_{i}" for i in range(1, len(id_values_occurrences) + 1)]  # for trial type column of BIDS events.tsv 
+        dict_event_id = dict((k, v) for k, v  in zip(trials_type, id_values_occurrences))
 
     # Write BIDS to create events.tsv BIDS compliant
     write_raw_bids(raw, bids_path, events_data=events, event_id=dict_event_id, overwrite=True)

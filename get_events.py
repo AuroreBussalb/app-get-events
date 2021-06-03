@@ -9,6 +9,7 @@ import shutil
 from mne_bids import BIDSPath, write_raw_bids
 import pandas as pd
 from collections import Counter
+import helper
 
 
 def get_events(raw, param_make_events, param_make_events_id, param_make_events_start,
@@ -105,57 +106,80 @@ def main():
     raw = mne.io.read_raw_fif(data_file, allow_maxshield=True)
 
 
-    ## Read the optional files
+    # ## Read the optional files
 
-    # Read the crosstalk file
-    cross_talk_file = config.pop('crosstalk')
+    # # Read the crosstalk file
+    # cross_talk_file = config.pop('crosstalk')
 
-    # Read the calibration file
-    calibration_file = config.pop('calibration')
+    # # Read the calibration file
+    # calibration_file = config.pop('calibration')
 
-    # Read destination file 
-    destination_file = config.pop('destination')
+    # # Read destination file 
+    # destination_file = config.pop('destination')
 
-    # Read events file 
-    events_file = config.pop('events') 
-    if events_file is not None:    
-        if os.path.exists(events_file) is True:
-            user_warning_message_events = f'The events.tsv file provided will be ' \
-                                          f'overwritten with the new events obtained by this App.' 
-            warnings.warn(user_warning_message_events)
-            dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
+    # # Read events file 
+    # events_file = config.pop('events') 
+    # if events_file is not None:    
+    #     if os.path.exists(events_file) is True:
+    #         user_warning_message_events = f'The events.tsv file provided will be ' \
+    #                                       f'overwritten with the new events obtained by this App.' 
+    #         warnings.warn(user_warning_message_events)
+    #         dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
 
-    # Read head pos file
-    head_pos = config.pop('headshape')
-    if head_pos is not None:
-        if os.path.exists(head_pos) is True:
-             shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
+    # # Read head pos file
+    # head_pos = config.pop('headshape')
+    # if head_pos is not None:
+    #     if os.path.exists(head_pos) is True:
+    #          shutil.copy2(head_pos, 'out_dir_get_events/headshape.pos')  # required to run a pipeline on BL
 
-    # Read channels file 
-    channels_file = config.pop('channels')
+    # # Read channels file 
+    # channels_file = config.pop('channels')
+    # if channels_file is not None:
+    #     if os.path.exists(channels_file):
+    #         shutil.copy2(channels_file, 'out_dir_get_events/channels.tsv')  # required to run a pipeline on BL
+    #         df_channels = pd.read_csv(channels_file, sep='\t')
+    #         # Select bad channels' name
+    #         bad_channels = df_channels[df_channels["status"] == "bad"]['name']
+    #         bad_channels = list(bad_channels.values)
+    #         # Put channels.tsv bad channels in raw.info['bads']
+    #         raw.info['bads'].sort() 
+    #         bad_channels.sort()
+    #         # Warning message
+    #         if raw.info['bads'] != bad_channels:
+    #             user_warning_message_channels = f'Bad channels from the info of your data file are different from ' \
+    #                                             f'those in the channels.tsv file. By default, only bad channels from channels.tsv ' \
+    #                                             f'are considered as bad: the info of your data file is updated with those channels.'
+    #             warnings.warn(user_warning_message_channels)
+    #             dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
+    #             raw.info['bads'] = bad_channels
+
+
+    # # Convert all "" into None when the App runs on BL
+    # tmp = dict((k, None) for k, v in config.items() if v == "")
+    # config.update(tmp)
+
+    config, cross_talk_file, calibration_file, events_file, head_pos_file, channels_file, destination = helper.read_optional_files(config, 'out_dir_get_events')
+    config = helper.convert_parameters_to_None(config)
+
+    # Channels.tsv must be BIDS compliant
     if channels_file is not None:
-        if os.path.exists(channels_file):
-            shutil.copy2(channels_file, 'out_dir_get_events/channels.tsv')  # required to run a pipeline on BL
-            df_channels = pd.read_csv(channels_file, sep='\t')
-            # Select bad channels' name
-            bad_channels = df_channels[df_channels["status"] == "bad"]['name']
-            bad_channels = list(bad_channels.values)
-            # Put channels.tsv bad channels in raw.info['bads']
-            raw.info['bads'].sort() 
-            bad_channels.sort()
-            # Warning message
-            if raw.info['bads'] != bad_channels:
-                user_warning_message_channels = f'Bad channels from the info of your data file are different from ' \
-                                                f'those in the channels.tsv file. By default, only bad channels from channels.tsv ' \
-                                                f'are considered as bad: the info of your data file is updated with those channels.'
-                warnings.warn(user_warning_message_channels)
-                dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
-                raw.info['bads'] = bad_channels
+        user_warning_message_channels = f'The channels file provided must be ' \
+                                        f'BIDS compliant and the column "status" must be present. ' 
+        warnings.warn(user_warning_message_channels)
+        dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
+
+        raw, user_warning_message_channels = helper.update_data_info_bads(raw, channels_file)
+        if user_warning_message_channels is not None: 
+            warnings.warn(user_warning_message_channels)
+            dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_channels})
 
 
-    # Convert all "" into None when the App runs on BL
-    tmp = dict((k, None) for k, v in config.items() if v == "")
-    config.update(tmp)
+    # Events file  
+    if events_file is not None:    
+        user_warning_message_events = f'The events.tsv file provided will be ' \
+                                      f'overwritten with the new events obtained by this App.' 
+        warnings.warn(user_warning_message_events)
+        dict_json_product['brainlife'].append({'type': 'warning', 'msg': user_warning_message_events})
 
     
     ## Convert parameters ## 
@@ -193,9 +217,11 @@ def main():
     ## Define kwargs ##
 
     # Delete keys values in config.json when this app is executed on Brainlife
-    if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
-        del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 
+    # if '_app' and '_tid' and '_inputs' and '_outputs' in config.keys():
+    #     del config['_app'], config['_tid'], config['_inputs'], config['_outputs'] 
+    config = helper.define_kwargs(config)
     kwargs = config  
+
 
     
     # Create or extract events

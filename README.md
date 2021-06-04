@@ -1,6 +1,6 @@
 # app-get-events
 
-This is the repository of a Brainlife App using MNE Python to extract existing events ([`mne.find_events`](https://mne.tools/stable/generated/mne.find_events.html?highlight=find_events#mne.find_events) or create events ([`mne.make_fixed_length_events`](https://mne.tools/stable/generated/mne.make_fixed_length_events.html?highlight=make_fixed_length_events#mne.make_fixed_length_events).
+This is the repository of a Brainlife App using MNE Python to extract existing events ([`mne.find_events`](https://mne.tools/stable/generated/mne.find_events.html?highlight=find_events#mne.find_events)) or create events ([`mne.make_fixed_length_events`](https://mne.tools/stable/generated/mne.make_fixed_length_events.html?highlight=make_fixed_length_events#mne.make_fixed_length_events)).
 
 # app-get-events documentation
 
@@ -12,6 +12,8 @@ This is the repository of a Brainlife App using MNE Python to extract existing e
     * an optional crosstalk compensation file in `.fif`,
     * an optional head position file in `.pos`,
     * an optional destination file in `.fif`,
+    * an optional events file in `.tsv`,
+    * an optional channels file in `.tsv`.
 4) Input parameters are:
     * `param_make_events`: `bool`, if True, fixed length events will be created, else existing events from the fif file will be extracted.
     * `param_make_events_id`: `int`, the id to use. Default is 1.
@@ -33,7 +35,7 @@ This is the repository of a Brainlife App using MNE Python to extract existing e
 This list along with the default values correspond to the parameters of MNE Python version 0.22.0.
 
 5) Ouput files are:
-    * a `.tsv` file containing the matrix of events.
+    * a `.tsv` events file BIDS compliant containing the matrix of events.
 
 ### Authors
 - [Aurore Bussalb](aurore.bussalb@icm-institute.org)

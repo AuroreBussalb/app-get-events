@@ -1,5 +1,5 @@
 {
-"fif": "/network/lustre/iss01/home/aurore.bussalb/Repositories/test_snr/data/subject_1/bad_channels_1.fif",
+"fif": "/network/lustre/iss01/home/aurore.bussalb/Repositories/data_test_BL/rest2-raw.fif",
 "events": "/network/lustre/iss01/home/aurore.bussalb/Repositories/app-create-events/out_dir_create_events/events.tsv",
 "calibration": null,
 "crosstalk": null,
@@ -16,8 +16,8 @@
 "param_find_events_stim_channels": null,
 "param_find_events_output": "onset",
 "param_find_events_consecutive": "increasing",
-"param_find_events_min_duration": 0,
-"param_find_events_shortest_event": 2,
+"param_find_events_min_duration": 1,
+"param_find_events_shortest_event": 1,
 "param_find_events_mask": null,
 "param_find_events_uint_cast": true,
 "param_find_events_mask_type": "and",

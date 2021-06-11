@@ -9,7 +9,7 @@ import shutil
 from mne_bids import BIDSPath, write_raw_bids
 import pandas as pd
 from collections import Counter
-import helper
+from brainlife_apps_helper import helper
 
 
 def get_events(raw, param_make_events, param_make_events_id, param_make_events_start,

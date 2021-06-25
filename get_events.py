@@ -71,7 +71,7 @@ def get_events(raw, param_make_events, param_make_events_id, param_make_events_s
 
     Returns
     -------
-    events: .tsv file
+    events: array
         File containing the matrix of events (shape (n_events, 3)).
     """
 
@@ -191,7 +191,7 @@ def main():
     if config['param_make_events'] is True:
         dict_event_id = {'event': config['param_make_events_id']}
     # When existing events were extracted    
-    else: # to be tested
+    else: # to be tested 
         event_id_value = list(events[:, 2])  # the third column of events corresponds to the value column of BIDS events.tsv
         id_values_occurrences = Counter(event_id_value)  # number of different events
         id_values_occurrences = list(id_values_occurrences.keys())
